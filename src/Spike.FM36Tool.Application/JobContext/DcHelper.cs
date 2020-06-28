@@ -9,6 +9,7 @@ using ESFA.DC.JobContext.Interface;
 using ESFA.DC.Queueing.Interface;
 using ESFA.DC.Serialization.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Spike.FM36Tool.Core;
 
 namespace Spike.FM36Tool.Application.JobContext
 {
@@ -37,12 +38,10 @@ namespace Spike.FM36Tool.Application.JobContext
             storageConnectionString = configuration.GetConnectionString("DcStorageConnectionString");
         }
 
-        public async Task SendPeriodEndTask(short collectionYear, byte collectionPeriod, long jobId, string taskName)
+        public async Task SendPeriodEndTask(short academicYear, byte collectionPeriod, long jobId, PeriodEndTask periodEndTask)
         {
             try
             {
-                //               dataContext.ClearJobId(jobId);
-
                 var dto = new JobContextDto
                 {
                     JobId = jobId,
@@ -50,9 +49,10 @@ namespace Spike.FM36Tool.Application.JobContext
                     {
                         {JobContextMessageKey.UkPrn, 0 },
                         {JobContextMessageKey.Filename, string.Empty },
-                        {JobContextMessageKey.CollectionYear, collectionYear },
-                        {JobContextMessageKey.ReturnPeriod, collectionPeriod },
-                        {JobContextMessageKey.Username, "PV2-FM36Tools" }
+                        { JobContextMessageKey.CollectionName, $"PE-DAS-{periodEndTask:G}{academicYear}"},
+                        {JobContextMessageKey.CollectionYear, academicYear },
+                        { JobContextMessageKey.ReturnPeriod, collectionPeriod },
+                        {JobContextMessageKey.Username, "Period End" }
                     },
                     SubmissionDateTimeUtc = DateTime.UtcNow,
                     TopicPointer = 0,
@@ -66,14 +66,14 @@ namespace Spike.FM36Tool.Application.JobContext
                                 new TaskItemDto
                                 {
                                     SupportsParallelExecution = false,
-                                    Tasks = new List<string> { taskName }
+                                    Tasks = new List<string> { periodEndTask.ToString("G") }
                                 }
                             }
                         }
                     }
                 };
-
-                await topicPublishingService.PublishAsync(dto, new Dictionary<string, object> { { "To", "Payments" } }, $"Payments_{taskName}");
+                var publisher = topicPublishingServiceFactory.GetPeriodEndTaskPublisher(periodEndTask);
+                await publisher.PublishAsync(dto, new Dictionary<string, object> { { "To", "Payments" } }, "Payments");
             }
             catch (Exception e)
             {

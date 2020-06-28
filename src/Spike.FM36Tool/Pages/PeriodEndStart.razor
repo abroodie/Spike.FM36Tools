@@ -1,0 +1,63 @@
+﻿@page "/periodendstart"
+
+@using Spike.FM36Tool.Data
+@using Spike.FM36Tool.Application.PeriodEnd
+@using Spike.FM36Tool.Core
+@inject PeriodEndService PeriodEndService
+
+<h1>
+     Period end start
+</h1>
+
+<EditForm Model=@periodEndTaskData OnSubmit="@SendPeriodEndTask">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="inputAcademicYear">Academic year</label>
+            <select id="inputAcademicYear" class="custom-select" @bind="periodEndTaskData.AcademicYear">
+                <option selected value="1920">1920</option>
+                <option value="2021">2021</option>
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="inputCollectionPeriod">Collection Period</label>
+            <select id="inputCollectionPeriod" class="custom-select" @bind="periodEndTaskData.CollectionPeriod">
+                <option selected value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+            </select>
+        </div>
+    </div>
+    <button type="submit" disabled="@isDisabled" class="btn btn-primary">Trigger Start</button>
+</EditForm>
+
+<div>
+    <h4>Job Id: @jobId</h4>
+</div>
+
+
+@code {
+
+    private long jobId;
+    private PeriodEndTaskData periodEndTaskData = new PeriodEndTaskData();
+    private bool isDisabled;
+
+    protected override async Task OnInitializedAsync()
+    {
+    }
+
+    public async Task SendPeriodEndTask()
+    {
+        isDisabled = true;
+        jobId = await PeriodEndService.SendPeriodEndTask(PeriodEndTask.PeriodEndStart, periodEndTaskData.AcademicYear, periodEndTaskData.CollectionPeriod);
+        isDisabled = false;
+    }
+}

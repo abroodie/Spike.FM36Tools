@@ -22,6 +22,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Spike.FM36Tool.Application.FM36Files;
 using Spike.FM36Tool.Application.JobContext;
+using Spike.FM36Tool.Application.PeriodEnd;
 using Spike.FM36Tool.Data;
 
 namespace Spike.FM36Tool
@@ -72,6 +73,7 @@ namespace Spike.FM36Tool
             services.AddScoped<AzureFileStorageFM36FilesProvider>();
             services.AddScoped<AzureFileStorageFm36FolderSubmission>();
             services.AddScoped<TopicPublishingServiceFactory>();
+            services.AddScoped<PeriodEndService>();
         }
 
 

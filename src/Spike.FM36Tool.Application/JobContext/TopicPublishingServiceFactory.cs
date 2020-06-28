@@ -5,6 +5,7 @@ using ESFA.DC.Queueing;
 using ESFA.DC.Queueing.Interface;
 using ESFA.DC.Serialization.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Spike.FM36Tool.Core;
 
 namespace Spike.FM36Tool.Application.JobContext
 {
@@ -20,6 +21,12 @@ namespace Spike.FM36Tool.Application.JobContext
             this.serializationService = serializationService ?? throw new ArgumentNullException(nameof(serializationService));
             servicebusConnectionString = configuration.GetConnectionString("DcServicebusConnectionString");
         }
+
+        public ITopicPublishService<JobContextDto> GetPeriodEndTaskPublisher(PeriodEndTask periodEndTask)
+        {
+            return Get("periodendtopic", "Payments");
+        }
+
         public ITopicPublishService<JobContextDto> GetSubmissionPublisher(short academicYear)
         {
             return Get($"ilr{academicYear}submissiontopic", "GenerateFM36Payments");
