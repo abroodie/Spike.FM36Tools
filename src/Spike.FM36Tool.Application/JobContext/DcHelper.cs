@@ -100,7 +100,7 @@ namespace Spike.FM36Tool.Application.JobContext
             try
             {
                 var container = $"ilr{academicYear}-files";
-                var messagePointer = $"{container}/{ukprn}/{jobId}/FundingFm36Output.json";
+                var messagePointer = $"{ukprn}/{jobId}/FundingFm36Output.json";
                 using (var stream = await azureFileService.OpenWriteStreamAsync(messagePointer, container, new CancellationToken()))
                 using (var writer = new StreamWriter(stream))
                 {
@@ -112,6 +112,7 @@ namespace Spike.FM36Tool.Application.JobContext
                     JobId = jobId,
                     KeyValuePairs = new Dictionary<string, object>
                     {
+                        {JobContextMessageKey.CollectionYear, academicYear},
                         {JobContextMessageKey.FundingFm36Output, messagePointer},
                         {JobContextMessageKey.Filename, messagePointer},
                         {JobContextMessageKey.UkPrn, ukprn},
@@ -139,6 +140,21 @@ namespace Spike.FM36Tool.Application.JobContext
                 };
 
                 var publisher = topicPublishingServiceFactory.GetSubmissionPublisher(academicYear);
+                await publisher.PublishAsync(dto, new Dictionary<string, object> { { "To", "GenerateFM36Payments" } }, "GenerateFM36Payments");
+                await Task.Delay(500);
+                dto.Topics.Add(new TopicItemDto
+                {
+                    SubscriptionName = "GenerateFM36Payments",
+                    Tasks = new List<TaskItemDto>
+                    {
+                        new TaskItemDto
+                        {
+                            SupportsParallelExecution = false,
+                            Tasks = new List<string>{"JobSuccess"}
+                        }
+                    }
+                });
+                dto.TopicPointer = 1;
                 await publisher.PublishAsync(dto, new Dictionary<string, object> { { "To", "GenerateFM36Payments" } }, "GenerateFM36Payments");
             }
             catch (Exception e)

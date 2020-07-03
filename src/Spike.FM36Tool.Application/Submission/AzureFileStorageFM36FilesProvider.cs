@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Threading.Tasks;
 using Azure.Storage.Files.Shares;
 using Azure.Storage.Files.Shares.Models;
 
-namespace Spike.FM36Tool.Application.FM36Files
+namespace Spike.FM36Tool.Application.Submission
 {
     public class AzureFileStorageFM36FilesProvider
     {

@@ -1,8 +1,7 @@
 ﻿@page "/fm36folders/{folderName}"
-
-@using Spike.FM36Tool.Application.FM36Files
 @using Spike.FM36Tool.Data
 @using Microsoft.AspNetCore.Mvc.ModelBinding
+@using Spike.FM36Tool.Application.Submission
 @using Spike.FM36Tool.Core
 @inject AzureFileStorageFM36FilesProvider FilesProvider
 @inject AzureFileStorageFm36FolderSubmission AzureFileStorageFm36FolderSubmission;
@@ -38,6 +37,8 @@
                 <option value="10">10</option>
                 <option value="11">11</option>
                 <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="13">14</option>
             </select>
         </div>
     </div>

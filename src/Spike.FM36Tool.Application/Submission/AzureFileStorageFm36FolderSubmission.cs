@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Files.Shares;
 using ESFA.DC.ILR.FundingService.FM36.FundingOutput.Model.Output;
-using Newtonsoft.Json;
 using Spike.FM36Tool.Application.JobContext;
-using Spike.FM36Tool.Core;
 
-namespace Spike.FM36Tool.Application.FM36Files
+namespace Spike.FM36Tool.Application.Submission
 {
     public class AzureFileStorageFm36FolderSubmission
     {
@@ -42,12 +39,12 @@ namespace Spike.FM36Tool.Application.FM36Files
                 }
 
                 var fm36 = Newtonsoft.Json.JsonConvert.DeserializeObject<FM36Global>(fm36Json);
-                if (fm36==null)
+                if (fm36 == null)
                     throw new InvalidOperationException($"Couldn't get the fm36 for file: {shareFileItem.Name} in folder: {folderName}");
                 var learners = fm36?.Learners;
                 var jobId = new Random(Guid.NewGuid().GetHashCode()).Next(int.MaxValue);
-                await dcHelper.SubmitFM36(learners.ToList(), (long)fm36.UKPRN, (short)academicYear, (byte)collectionPeriod, jobId);
-                result.Add((fm36.UKPRN,jobId,learners.Count));
+                await dcHelper.SubmitFM36(learners, (long)fm36.UKPRN, (short)academicYear, (byte)collectionPeriod, jobId);
+                result.Add((fm36.UKPRN, jobId, learners.Count));
             }
             return result;
         }
