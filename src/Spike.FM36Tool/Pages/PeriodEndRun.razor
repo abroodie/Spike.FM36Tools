@@ -33,6 +33,8 @@
                 <option value="10">10</option>
                 <option value="11">11</option>
                 <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="13">14</option>
             </select>
         </div>
     </div>
@@ -57,7 +59,7 @@
     public async Task SendPeriodEndTask()
     {
         isDisabled = true;
-        jobId = await PeriodEndService.SendPeriodEndTask(PeriodEndTask.PeriodEndStart, periodEndTaskData.AcademicYear, periodEndTaskData.CollectionPeriod);
+        jobId = await PeriodEndService.SendPeriodEndTask(PeriodEndTask.PeriodEndRun, periodEndTaskData.AcademicYear, periodEndTaskData.CollectionPeriod);
         isDisabled = false;
     }
 }
